@@ -20,36 +20,35 @@ function MaterialPurchase() {
 
     const toggleModal = () => setIsModalOpen(!isModalOpen);
 
-    const fetchData = async (page) => {
-        if (!token) return;
-        setLoading(true);
-        try {
-            const response = await fetch(`https://devapi.propsoft.ai/api/auth/interview/material-purchase?page=${page}`, {
-                method: 'GET',
-                headers: {
-                    'Authorization': `Bearer ${token}`,
-                    'Content-Type': 'application/json',
-                },
-            });
-
-            const result = await response.json();
-
-            if (response.ok && result.status_code === '1') {
-                setData(result.material_purchase_list.data);   
-                setTotalPages(result.material_purchase_list.last_page); 
-            } else {
-                console.error(result.status_message);
-            }
-        } catch (error) {
-            console.error('Error fetching data:', error);
-        } finally {
-            setLoading(false); 
-        }
-    };
-
-    
     useEffect(() => {
-        fetchData(currentPage);
+        const fetchData = async () => {
+            if (!token) return;
+            setLoading(true);
+            try {
+                const response = await fetch(`https://devapi.propsoft.ai/api/auth/interview/material-purchase?page=${currentPage}`, {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json',
+                    },
+                });
+
+                const result = await response.json();
+
+                if (response.ok && result.status_code === '1') {
+                    setData(result.material_purchase_list.data);
+                    setTotalPages(result.material_purchase_list.last_page);
+                } else {
+                    console.error(result.status_message);
+                }
+            } catch (error) {
+                console.error('Error fetching data:', error);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchData(); 
     }, [currentPage, token]);
 
     // Handle page change
